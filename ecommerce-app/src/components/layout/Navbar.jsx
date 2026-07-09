@@ -139,9 +139,6 @@ export default function Navbar() {
                 <LocationOnOutlinedIcon sx={{ fontSize: 16 }} />
                 Plot No. 444, Udyog Vihar Phase 3,
               </span>
-              <span className="text-sm font-bold text-white">
-                Update location
-              </span>
             </NavItem>
           </div>
 
