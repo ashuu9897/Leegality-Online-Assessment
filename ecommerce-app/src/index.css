@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+/*
+ * NOTE: do not add a bare universal padding reset here (e.g. * { padding: 0 }).
+ * Tailwind v4 places its utilities in @layer utilities, and an unlayered
+ * universal rule outranks every layer, silently overriding all padding
+ * utilities app-wide. Tailwind's Preflight already resets margins and
+ * box-sizing inside the base layer, so utilities can still win.
+ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enabled buttons should always show the pointer cursor.
+   Kept in @layer base so a `cursor-*` utility can still override it. */
+@layer base {
+  button:not(:disabled),
+  [role="button"],
+  label:has(> input[type="checkbox"]) {
+    cursor: pointer;
+  }
+}
+
+body {
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+  background-color: #f3f4f6;
+  color: #1f2937;
+  overflow-x: hidden;
+
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  display: -webkit-box;
+
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
