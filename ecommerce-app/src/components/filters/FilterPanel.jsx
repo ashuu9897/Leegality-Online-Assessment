@@ -1,15 +1,12 @@
-import { useDispatch } from 'react-redux';
-import FilterSection from './FilterSection';
-import SearchFilter from './SearchFilter';
-import CategoryFilter from './CategoryFilter';
-import PriceRangeFilter from './PriceRangeFilter';
-import BrandFilter from './BrandFilter';
-import { resetFilters } from '../../features/products/filtersSlice';
+import { useDispatch } from "react-redux";
+import FilterSection from "./FilterSection";
+import SearchFilter from "./SearchFilter";
+import CategoryFilter from "./CategoryFilter";
+import PriceRangeFilter from "./PriceRangeFilter";
+import BrandFilter from "./BrandFilter";
+import GenderFilter from "./GenderFilter";
+import { resetFilters } from "../../features/products/filtersSlice";
 
-/**
- * The filter body (header + accordion sections), shared by the desktop
- * persistent sidebar and the mobile drawer.
- */
 export default function FilterPanel({ categories, brands }) {
   const dispatch = useDispatch();
 
@@ -30,7 +27,7 @@ export default function FilterPanel({ categories, brands }) {
         <SearchFilter />
       </FilterSection>
 
-      <FilterSection title="Shop by Category">
+      <FilterSection title="Shop by Category" defaultOpen={false}>
         <CategoryFilter categories={categories} />
       </FilterSection>
 
@@ -39,10 +36,14 @@ export default function FilterPanel({ categories, brands }) {
       </FilterSection>
 
       {brands.length > 0 && (
-        <FilterSection title="Brand">
+        <FilterSection title="Brand" defaultOpen={false}>
           <BrandFilter brands={brands} />
         </FilterSection>
       )}
+
+      <FilterSection title="Gender">
+        <GenderFilter />
+      </FilterSection>
     </div>
   );
 }

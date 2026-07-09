@@ -1,4 +1,4 @@
-# 🛒 ShopZone — React E-Commerce Product Listing App
+# 🛒 Leegality — React E-Commerce Product Listing App
 
 An **Amazon-style** product listing and detail application built with **React 19, Redux Toolkit,
 React Router 7, Tailwind CSS v4, and MUI (icons + a few primitives)**. Powered by the public
@@ -11,9 +11,11 @@ Built for the **Leegality Frontend Engineer Assessment**.
 ## Setup Instructions
 
 ### Prerequisites
+
 - Node.js 18+ and npm 9+
 
 ### Install & Run
+
 ```bash
 cd ecommerce-app
 npm install
@@ -21,6 +23,7 @@ npm run dev        # → http://localhost:5173
 ```
 
 ### Build / preview / lint
+
 ```bash
 npm run build      # production build → dist/
 npm run preview    # preview the production build
@@ -31,25 +34,26 @@ npm run lint       # oxlint
 
 ## Assessment requirements — where they live
 
-| Requirement | Location |
-| --- | --- |
-| Listing page (filters left, grid right, pagination) | `pages/ProductListingPage.jsx` |
-| Detail page | `pages/ProductDetailPage.jsx` |
-| Card: image, title, price, rating | `components/product/ProductCard.jsx` |
-| Card click → `/product/:id` | `ProductCard` + React Router |
-| **Category** filter (dynamic from `/products/categories`) | `components/filters/CategoryFilter.jsx` |
-| **Price range** filter (min/max) | `components/filters/PriceRangeFilter.jsx` |
-| **Brand** filter (unique brands, multi-select) | `components/filters/BrandFilter.jsx` |
-| Combined filtering | `utils/filterProducts.js` |
-| Pagination resets on filter change | every reducer sets `currentPage = 1` (`features/products/filtersSlice.js`) |
-| Loading + error states | `components/common/Loader.jsx`, `ErrorMessage.jsx` |
-| Detail: image, name, price, rating, description, brand, category | `ProductDetailPage.jsx` |
-| Back button + filters preserved on back | Back button + URL-synced filters (`hooks/useQueryParams.js`) |
-| API endpoints used | `api/productApi.js` |
+| Requirement                                                      | Location                                                                   |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Listing page (filters left, grid right, pagination)              | `pages/ProductListingPage.jsx`                                             |
+| Detail page                                                      | `pages/ProductDetailPage.jsx`                                              |
+| Card: image, title, price, rating                                | `components/product/ProductCard.jsx`                                       |
+| Card click → `/product/:id`                                      | `ProductCard` + React Router                                               |
+| **Category** filter (dynamic from `/products/categories`)        | `components/filters/CategoryFilter.jsx`                                    |
+| **Price range** filter (min/max)                                 | `components/filters/PriceRangeFilter.jsx`                                  |
+| **Brand** filter (unique brands, multi-select)                   | `components/filters/BrandFilter.jsx`                                       |
+| Combined filtering                                               | `utils/filterProducts.js`                                                  |
+| Pagination resets on filter change                               | every reducer sets `currentPage = 1` (`features/products/filtersSlice.js`) |
+| Loading + error states                                           | `components/common/Loader.jsx`, `ErrorMessage.jsx`                         |
+| Detail: image, name, price, rating, description, brand, category | `ProductDetailPage.jsx`                                                    |
+| Back button + filters preserved on back                          | Back button + URL-synced filters (`hooks/useQueryParams.js`)               |
+| API endpoints used                                               | `api/productApi.js`                                                        |
 
 ---
 
 ## Project structure
+
 ```
 src/
 ├── api/                # axios instance + endpoint wrappers
@@ -86,28 +90,34 @@ src/
 ## Architectural Decisions
 
 ### URL as source of truth for filter state
+
 Filter state (category, price, brands, search, sort, page) lives in Redux **and** is mirrored in the
 URL via `hooks/useQueryParams.js`. On mount Redux hydrates from the URL; on change the URL updates
 (`replace`). Result: browser back/forward and the detail page’s Back button preserve filters, and
 filtered views are shareable / refresh-safe.
 
 ### Redux Toolkit for shared state
+
 `productsSlice` (API data) and `filtersSlice` (user selections) are separate. Presentational
 components receive props only; container logic lives in `pages/` and `hooks/useProducts.js`.
 `cart` and `wishlist` are persisted to `localStorage` via a single `store.subscribe` listener and
 rehydrated with `preloadedState`.
 
 ### Page reset inside the reducer
+
 Every filter action resets `currentPage` to 1 **in the same reducer**, avoiding `useEffect` races.
 
 ### Debounced inputs
+
 Search and price inputs use `useDebounce(300ms)` before dispatching, preventing a re-filter on every
 keystroke.
 
 ### Code splitting
+
 The three pages are lazy-loaded (`React.lazy` + `Suspense`) for a smaller initial bundle.
 
 ### MUI used sparingly
+
 Only icons + `Rating`, `Skeleton`, `Drawer`, `Pagination`. All layout/styling is Tailwind.
 
 ---
@@ -138,3 +148,12 @@ Only icons + `Rating`, `Skeleton`, `Drawer`, `Pagination`. All layout/styling is
 - **Error boundaries** around pages.
 - **SWR-style caching** of API responses in Redux with timestamps to skip recent re-fetches.
 - Replace remaining MUI primitives with custom components to fully honour “avoid heavy UI libraries”.
+- **Share products**: a Share button on the detail page using the browser **Web Share API**
+  (`navigator.share`) on mobile, with a "copy link to clipboard" fallback on desktop — so a shopper can
+  send a specific product link to someone.
+- **Open Graph library for sharing (rich link previews)**: inject per-product **Open Graph / Twitter
+  Card** meta tags (title, description, image, price) into `<head>` — e.g. via `react-helmet-async` or
+  React 19's native `<title>`/`<meta>` hoisting — so a pasted product link renders a rich preview card
+  (image + title + price) in WhatsApp / Slack / iMessage / Twitter instead of a bare URL. Full previews
+  for non-JS crawlers would need SSR/prerender (Next.js), the natural next step.
+- Implement a zoom effect when hovering over the image.

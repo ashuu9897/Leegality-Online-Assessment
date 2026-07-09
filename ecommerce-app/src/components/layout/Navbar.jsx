@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { IconButton, Badge, Menu, MenuItem, Divider } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -9,7 +9,11 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import { setSearchQuery } from "../../features/products/filtersSlice";
-import { toggleFiltersDrawer, openCartDrawer } from "../../features/ui/uiSlice";
+import {
+  toggleFiltersDrawer,
+  toggleDesktopSidebar,
+  openCartDrawer,
+} from "../../features/ui/uiSlice";
 import { useDebounce } from "../../hooks/useDebounce";
 import { DEBOUNCE_DELAY } from "../../utils/constants";
 
@@ -64,6 +68,7 @@ function SearchForm({ query, setQuery, onSubmit, className = "" }) {
 export default function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const cartCount = useSelector((state) =>
     state.cart.items.reduce((n, i) => n + i.qty, 0),
   );
@@ -86,6 +91,19 @@ export default function Navbar() {
     if (window.location.pathname !== "/") navigate("/");
   };
 
+  const handleHamburger = () => {
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+    const isListing = location.pathname === "/";
+    // The persistent sidebar only exists on the listing page at desktop widths —
+    // there the hamburger collapses/expands it. Everywhere else (mobile, or the
+    // detail/checkout pages) it opens the overlay filter drawer.
+    if (isDesktop && isListing) {
+      dispatch(toggleDesktopSidebar());
+    } else {
+      dispatch(toggleFiltersDrawer());
+    }
+  };
+
   return (
     <nav className="bg-gray-900 text-white sticky top-0 z-40 shadow-md">
       <div className="max-w-[1920px] mx-auto px-2 sm:px-4">
@@ -93,25 +111,27 @@ export default function Navbar() {
         <div className="flex items-center gap-1 sm:gap-3 h-14 sm:h-16">
           {/* Left: hamburger + logo + location */}
           <div className="flex items-center gap-0.5 sm:gap-2 shrink-0 min-w-0">
-            {/* Filters live in a persistent sidebar on desktop, so the
-                hamburger (opens the mobile drawer) is only shown below lg. */}
-            <span className="lg:hidden">
-              <IconButton
-                onClick={() => dispatch(toggleFiltersDrawer())}
-                className="text-white!"
-                aria-label="Open filters menu"
-                size="medium"
-              >
-                <MenuIcon />
-              </IconButton>
-            </span>
+            <IconButton
+              onClick={handleHamburger}
+              className="text-white!"
+              aria-label="Toggle filters"
+              size="medium"
+            >
+              <MenuIcon />
+            </IconButton>
 
             <Link
               to="/"
-              className="flex items-center gap-1.5 font-bold text-base sm:text-xl tracking-tight border border-transparent hover:border-white rounded px-1.5 sm:px-2 py-1 transition-colors shrink-0"
+              className="flex items-center rounded shrink-0"
+              aria-label="Leegality home"
             >
-              <ShoppingCartOutlinedIcon className="text-xl! sm:text-2xl!" />
-              <span>Leegality</span>
+              <span className="bg-white rounded-md px-2 py-1.5 flex items-center">
+                <img
+                  src="https://cdn.prod.website-files.com/5fef5231c8595fadb2b2a3cf/65a63eabd7998b73d63869c4_logo%20leegality%201.svg"
+                  alt="Leegality"
+                  className="h-5 sm:h-6 w-auto"
+                />
+              </span>
             </Link>
 
             <NavItem className="hidden lg:flex shrink-0">

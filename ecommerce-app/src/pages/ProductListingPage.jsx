@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useProducts, useFilterMeta } from '../hooks/useProducts';
 import { useQueryParams } from '../hooks/useQueryParams';
 import { fetchProducts } from '../features/products/productsSlice';
@@ -22,6 +22,7 @@ export default function ProductListingPage() {
   useQueryParams();
   const dispatch = useDispatch();
   const { categories, availableBrands } = useFilterMeta();
+  const sidebarOpen = useSelector((state) => state.ui.desktopSidebarOpen);
 
   const {
     products,
@@ -57,10 +58,12 @@ export default function ProductListingPage() {
   return (
     <main className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-5">
       <div className="flex gap-6 items-start">
-        {/* Persistent sidebar (desktop only) */}
-        <aside className="hidden lg:block w-72 shrink-0 bg-white rounded-lg border border-gray-200 self-start sticky top-20 max-h-[calc(100vh-100px)] overflow-y-auto">
-          <FilterPanel categories={categories} brands={availableBrands} />
-        </aside>
+        {/* Persistent sidebar (desktop only) — collapsible via the navbar hamburger */}
+        {sidebarOpen && (
+          <aside className="hidden lg:block w-72 shrink-0 bg-white rounded-lg border border-gray-200 self-start sticky top-20 max-h-[calc(100vh-100px)] overflow-y-auto">
+            <FilterPanel categories={categories} brands={availableBrands} />
+          </aside>
+        )}
 
         {/* Content */}
         <div className="flex-1 min-w-0">

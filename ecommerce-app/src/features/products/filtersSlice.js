@@ -7,6 +7,7 @@ const filtersSlice = createSlice({
     minPrice: '',
     maxPrice: '',
     selectedBrands: [],
+    selectedGenders: [],
     currentPage: 1,
     searchQuery: '',
     sortBy: 'featured',
@@ -42,15 +43,26 @@ const filtersSlice = createSlice({
       }
       state.currentPage = 1;
     },
+    toggleGender(state, action) {
+      const gender = action.payload;
+      const idx = state.selectedGenders.indexOf(gender);
+      if (idx === -1) {
+        state.selectedGenders.push(gender);
+      } else {
+        state.selectedGenders.splice(idx, 1);
+      }
+      state.currentPage = 1;
+    },
     setPage(state, action) {
       state.currentPage = action.payload;
     },
     setFiltersFromParams(state, action) {
-      const { category, minPrice, maxPrice, brands, page, search, sort } = action.payload;
+      const { category, minPrice, maxPrice, brands, genders, page, search, sort } = action.payload;
       state.selectedCategory = category || 'all';
       state.minPrice = minPrice || '';
       state.maxPrice = maxPrice || '';
       state.selectedBrands = brands ? (Array.isArray(brands) ? brands : [brands]) : [];
+      state.selectedGenders = genders ? (Array.isArray(genders) ? genders : [genders]) : [];
       state.currentPage = page ? Number(page) : 1;
       state.searchQuery = search || '';
       state.sortBy = sort || 'featured';
@@ -60,6 +72,7 @@ const filtersSlice = createSlice({
       state.minPrice = '';
       state.maxPrice = '';
       state.selectedBrands = [];
+      state.selectedGenders = [];
       state.currentPage = 1;
       state.searchQuery = '';
       state.sortBy = 'featured';
@@ -74,6 +87,7 @@ export const {
   setMinPrice,
   setMaxPrice,
   toggleBrand,
+  toggleGender,
   setPage,
   setFiltersFromParams,
   resetFilters,

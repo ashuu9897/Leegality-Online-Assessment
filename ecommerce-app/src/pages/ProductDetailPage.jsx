@@ -13,6 +13,7 @@ import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
 import RatingStars from "../components/product/RatingStars";
 import ProductGrid from "../components/product/ProductGrid";
 import ErrorMessage from "../components/common/ErrorMessage";
+import Pagination from "../components/common/Pagination";
 import { getProductById, getProductsByCategory } from "../api/productApi";
 import { addToCart } from "../features/cart/cartSlice";
 import { openCartDrawer } from "../features/ui/uiSlice";
@@ -167,42 +168,44 @@ export default function ProductDetailPage() {
         <>
           <article className="flex flex-col lg:flex-row gap-6 lg:gap-8 bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
             {/* ===== Images ===== */}
-            <div className="lg:w-2/5 lg:sticky lg:top-20 self-start">
-              <div className="flex gap-3">
-                {/* Vertical thumbnails */}
-                {images.length > 1 && (
-                  <div className="flex flex-col gap-2 shrink-0">
-                    {images.slice(0, 7).map((img, i) => (
-                      <button
-                        key={i}
-                        onMouseEnter={() => setActiveImage(i)}
-                        onClick={() => setActiveImage(i)}
-                        aria-label={`View image ${i + 1}`}
-                        className={`w-12 h-12 rounded-md border bg-white overflow-hidden transition-colors ${
-                          activeImage === i
-                            ? "border-[#e77600] ring-1 ring-[#e77600]"
-                            : "border-gray-300 hover:border-[#e77600]"
-                        }`}
-                      >
-                        <img
-                          src={img}
-                          alt=""
-                          className="w-full h-full object-contain"
-                        />
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                {/* Main image */}
-                <div className="flex-1 bg-white rounded-lg flex items-center justify-center p-4 min-h-90 sm:min-h-110">
-                  <img
-                    src={images[activeImage] || product.thumbnail}
-                    alt={product.title}
-                    className="max-h-105 w-full object-contain"
-                  />
-                </div>
+            <div className="w-full lg:w-2/5 lg:sticky lg:top-20 self-start">
+              {/* Main image — fixed-height box keeps every product aligned */}
+              <div className="bg-white rounded-lg border border-gray-100 flex items-center justify-center p-4 h-80 sm:h-105">
+                <img
+                  src={images[activeImage] || product.thumbnail}
+                  alt={product.title}
+                  className="max-h-full max-w-full object-contain"
+                />
               </div>
+
+              {/* Optional thumbnail strip */}
+              {/* {images.length > 1 && (
+                <div className="flex flex-wrap justify-center gap-2 mt-3">
+                  {images.map((img, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setActiveImage(i)}
+                      aria-label={`View image ${i + 1}`}
+                      className={`w-12 h-12 rounded-md border bg-white overflow-hidden transition-colors ${
+                        activeImage === i
+                          ? "border-[#e77600] ring-1 ring-[#e77600]"
+                          : "border-gray-300 hover:border-[#e77600]"
+                      }`}
+                    >
+                      <img src={img} alt="" className="w-full h-full object-contain" />
+                    </button>
+                  ))}
+                </div>
+              )} */}
+
+              {/* Photo pagination (same style; shows "1" even for a single photo) */}
+              <Pagination
+                currentPage={activeImage + 1}
+                totalPages={Math.max(images.length, 1)}
+                onPageChange={(p) => setActiveImage(p - 1)}
+                showSingle
+                compact
+              />
             </div>
 
             {/* ===== Center: details ===== */}

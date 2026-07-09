@@ -1,10 +1,6 @@
-import { useState } from 'react';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { useState } from "react";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
-/**
- * Collapsible filter group (Amazon-style accordion).
- * Owns the section title + expand/collapse chevron.
- */
 export default function FilterSection({ title, children, defaultOpen = true }) {
   const [open, setOpen] = useState(defaultOpen);
 
@@ -18,12 +14,12 @@ export default function FilterSection({ title, children, defaultOpen = true }) {
       >
         <span className="text-[15px] font-bold text-gray-900">{title}</span>
         <KeyboardArrowDownIcon
-          className={`text-gray-500 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+          className={`text-gray-500 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
         />
       </button>
       <div
         className={`grid transition-all duration-200 ease-in-out ${
-          open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+          open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
         }`}
       >
         <div className="overflow-hidden">

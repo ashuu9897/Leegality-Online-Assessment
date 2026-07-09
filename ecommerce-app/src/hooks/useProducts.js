@@ -1,25 +1,32 @@
-import { useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts } from '../features/products/productsSlice';
+import { useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts } from "../features/products/productsSlice";
 import {
   filterProducts,
   paginateProducts,
   sortProducts,
   computeAvailableBrands,
-} from '../utils/filterProducts';
-import { PRODUCTS_PER_PAGE } from '../utils/constants';
+} from "../utils/filterProducts";
+import { PRODUCTS_PER_PAGE } from "../utils/constants";
 
-/**
- * Pure selector hook for the filter panels (safe to call from multiple
- * components). The one-time full-catalog brand fetch is dispatched in AppShell.
- */
 export function useFilterMeta() {
-  const { allProducts, categories, allBrands } = useSelector((state) => state.products);
+  const { allProducts, categories } = useSelector((state) => state.products);
+  const { minPrice, maxPrice, searchQuery, selectedGenders } = useSelector(
+    (state) => state.filters,
+  );
 
-  // Prefer the full-catalog brand list; fall back to whatever is loaded.
   const availableBrands = useMemo(
-    () => (allBrands.length ? allBrands : computeAvailableBrands(allProducts)),
-    [allBrands, allProducts]
+    () =>
+      computeAvailableBrands(
+        filterProducts(allProducts, {
+          minPrice,
+          maxPrice,
+          searchQuery,
+          selectedGenders,
+          selectedBrands: [],
+        }),
+      ),
+    [allProducts, minPrice, maxPrice, searchQuery, selectedGenders],
   );
 
   return { categories, availableBrands };
@@ -27,31 +34,52 @@ export function useFilterMeta() {
 
 export function useProducts() {
   const dispatch = useDispatch();
-  const { allProducts, categories, status, error } = useSelector((state) => state.products);
+  const { allProducts, categories, status, error } = useSelector(
+    (state) => state.products,
+  );
   const filters = useSelector((state) => state.filters);
-  const { selectedCategory, minPrice, maxPrice, selectedBrands, currentPage, searchQuery, sortBy } = filters;
+  const {
+    selectedCategory,
+    minPrice,
+    maxPrice,
+    selectedBrands,
+    selectedGenders,
+    currentPage,
+    searchQuery,
+    sortBy,
+  } = filters;
 
-  // Fetch products when category changes
   useEffect(() => {
     dispatch(fetchProducts(selectedCategory));
   }, [dispatch, selectedCategory]);
 
-  // Client-side filter (price + brand + search)
   const filteredProducts = useMemo(
-    () => filterProducts(allProducts, { minPrice, maxPrice, selectedBrands, searchQuery }),
-    [allProducts, minPrice, maxPrice, selectedBrands, searchQuery]
+    () =>
+      filterProducts(allProducts, {
+        minPrice,
+        maxPrice,
+        selectedBrands,
+        selectedGenders,
+        searchQuery,
+      }),
+    [
+      allProducts,
+      minPrice,
+      maxPrice,
+      selectedBrands,
+      selectedGenders,
+      searchQuery,
+    ],
   );
 
-  // Client-side sort
   const sortedProducts = useMemo(
     () => sortProducts(filteredProducts, sortBy),
-    [filteredProducts, sortBy]
+    [filteredProducts, sortBy],
   );
 
-  // Client-side pagination
   const paginatedProducts = useMemo(
     () => paginateProducts(sortedProducts, currentPage, PRODUCTS_PER_PAGE),
-    [sortedProducts, currentPage]
+    [sortedProducts, currentPage],
   );
 
   const totalPages = Math.ceil(sortedProducts.length / PRODUCTS_PER_PAGE);

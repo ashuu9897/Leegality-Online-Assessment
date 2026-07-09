@@ -1,19 +1,9 @@
 @import "tailwindcss";
 
-/*
- * NOTE: do not add a bare universal padding reset here (e.g. * { padding: 0 }).
- * Tailwind v4 places its utilities in @layer utilities, and an unlayered
- * universal rule outranks every layer, silently overriding all padding
- * utilities app-wide. Tailwind's Preflight already resets margins and
- * box-sizing inside the base layer, so utilities can still win.
- */
-
 html {
   scroll-behavior: smooth;
 }
 
-/* Enabled buttons should always show the pointer cursor.
-   Kept in @layer base so a `cursor-*` utility can still override it. */
 @layer base {
   button:not(:disabled),
   [role="button"],
@@ -41,7 +31,6 @@ body {
   min-height: 100vh;
 }
 
-/* Line clamp utilities */
 .line-clamp-2 {
   display: -webkit-box;
 
@@ -49,7 +38,6 @@ body {
   overflow: hidden;
 }
 
-/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }

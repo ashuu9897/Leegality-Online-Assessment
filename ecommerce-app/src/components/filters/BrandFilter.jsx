@@ -1,8 +1,10 @@
+import { useId } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleBrand } from '../../features/products/filtersSlice';
 
 export default function BrandFilter({ brands }) {
   const dispatch = useDispatch();
+  const uid = useId();
   const selectedBrands = useSelector((state) => state.filters.selectedBrands);
 
   if (brands.length === 0) return null;
@@ -11,7 +13,7 @@ export default function BrandFilter({ brands }) {
     <ul role="list" className="-mx-2 max-h-72 overflow-y-auto">
         {brands.map(({ brand, count }) => {
           const checked = selectedBrands.includes(brand);
-          const id = `brand-${brand.replace(/\s+/g, '-').toLowerCase()}`;
+          const id = `${uid}-${brand.replace(/\s+/g, '-').toLowerCase()}`;
           return (
             <li key={brand}>
               <label

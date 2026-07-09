@@ -3,7 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const uiSlice = createSlice({
   name: 'ui',
   initialState: {
-    filtersDrawerOpen: false,
+    filtersDrawerOpen: false, // mobile/tablet drawer
+    desktopSidebarOpen: true, // persistent desktop sidebar (collapsible)
     cartDrawerOpen: false,
   },
   reducers: {
@@ -15,6 +16,9 @@ const uiSlice = createSlice({
     },
     toggleFiltersDrawer(state) {
       state.filtersDrawerOpen = !state.filtersDrawerOpen;
+    },
+    toggleDesktopSidebar(state) {
+      state.desktopSidebarOpen = !state.desktopSidebarOpen;
     },
     openCartDrawer(state) {
       state.cartDrawerOpen = true;
@@ -32,6 +36,7 @@ export const {
   openFiltersDrawer,
   closeFiltersDrawer,
   toggleFiltersDrawer,
+  toggleDesktopSidebar,
   openCartDrawer,
   closeCartDrawer,
   toggleCartDrawer,

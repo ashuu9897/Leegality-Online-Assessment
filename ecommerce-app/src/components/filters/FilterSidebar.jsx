@@ -1,27 +1,32 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { IconButton } from '@mui/material';
-import CloseIcon from '@mui/icons-material/Close';
-import PersonIcon from '@mui/icons-material/Person';
-import FilterPanel from './FilterPanel';
-import { closeFiltersDrawer } from '../../features/ui/uiSlice';
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
+import PersonIcon from "@mui/icons-material/Person";
+import FilterPanel from "./FilterPanel";
+import { closeFiltersDrawer } from "../../features/ui/uiSlice";
 
-/**
- * Mobile / tablet filter drawer (hidden on lg+, where the persistent
- * sidebar in the listing page is shown instead).
- */
 export default function FilterSidebar({ categories, brands }) {
   const dispatch = useDispatch();
+  const location = useLocation();
   const drawerOpen = useSelector((state) => state.ui.filtersDrawerOpen);
   const close = () => dispatch(closeFiltersDrawer());
 
+  // Close the drawer whenever the route changes (e.g. navigating to a product),
+  // so it never lingers over the desktop listing's persistent sidebar.
+  useEffect(() => {
+    dispatch(closeFiltersDrawer());
+  }, [location.pathname, dispatch]);
+
   return (
-    <div className="lg:hidden">
+    <div>
       {/* Dimmed backdrop — click to close */}
       <div
         onClick={close}
         aria-hidden="true"
         className={`fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 ${
-          drawerOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          drawerOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       />
 
@@ -29,7 +34,7 @@ export default function FilterSidebar({ categories, brands }) {
         aria-label="Product filters"
         aria-hidden={!drawerOpen}
         className={`fixed left-0 top-0 z-50 w-91.25 max-w-[85vw] h-screen bg-white shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
-          drawerOpen ? 'translate-x-0' : '-translate-x-full'
+          drawerOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         {/* Dark account header — Amazon navy */}
@@ -40,7 +45,12 @@ export default function FilterSidebar({ categories, brands }) {
             </div>
             <span className="text-lg font-bold">Hello, sign in</span>
           </div>
-          <IconButton size="small" onClick={close} className="text-white!" aria-label="Close menu">
+          <IconButton
+            size="small"
+            onClick={close}
+            className="text-white!"
+            aria-label="Close menu"
+          >
             <CloseIcon />
           </IconButton>
         </div>

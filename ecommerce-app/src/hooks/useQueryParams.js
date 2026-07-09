@@ -19,6 +19,7 @@ export function useQueryParams() {
           minPrice: searchParams.get('minPrice'),
           maxPrice: searchParams.get('maxPrice'),
           brands: searchParams.getAll('brand'),
+          genders: searchParams.getAll('gender'),
           page: searchParams.get('page'),
           search: searchParams.get('q'),
           sort: searchParams.get('sort'),
@@ -42,12 +43,14 @@ export function useQueryParams() {
 
     const newParams = new URLSearchParams(params);
     filters.selectedBrands.forEach((b) => newParams.append('brand', b));
+    filters.selectedGenders.forEach((g) => newParams.append('gender', g));
     setSearchParams(newParams, { replace: true });
   }, [
     filters.selectedCategory,
     filters.minPrice,
     filters.maxPrice,
     filters.selectedBrands,
+    filters.selectedGenders,
     filters.currentPage,
     filters.searchQuery,
     filters.sortBy,

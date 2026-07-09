@@ -20,9 +20,3 @@ export const getProductById = async (id) => {
   const response = await axiosInstance.get(`/products/${id}`);
   return response.data;
 };
-
-// Lightweight call to build the full brand list once (only the `brand` field).
-export const getAllBrands = async () => {
-  const response = await axiosInstance.get('/products?limit=0&select=brand');
-  return response.data;
-};

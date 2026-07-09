@@ -1,6 +1,12 @@
+export function productGender(category = "") {
+  if (category.startsWith("mens-")) return "men";
+  if (category.startsWith("womens-")) return "women";
+  return "unisex";
+}
+
 export function filterProducts(
   products,
-  { minPrice, maxPrice, selectedBrands, searchQuery },
+  { minPrice, maxPrice, selectedBrands, searchQuery, selectedGenders = [] },
 ) {
   return products.filter((product) => {
     const min = minPrice !== "" ? Number(minPrice) : null;
@@ -11,6 +17,11 @@ export function filterProducts(
 
     if (selectedBrands.length > 0) {
       if (!product.brand || !selectedBrands.includes(product.brand))
+        return false;
+    }
+
+    if (selectedGenders.length > 0) {
+      if (!selectedGenders.includes(productGender(product.category)))
         return false;
     }
 
@@ -25,41 +36,32 @@ export function filterProducts(
   });
 }
 
-// Price after discount — used for price sorting.
 const netPrice = (p) => p.price * (1 - (p.discountPercentage || 0) / 100);
 
-/**
- * Returns a NEW sorted array (does not mutate input).
- * sortBy: 'featured' | 'price-asc' | 'price-desc' | 'rating' | 'discount'
- */
 export function sortProducts(products, sortBy) {
-  if (!sortBy || sortBy === 'featured') return products;
+  if (!sortBy || sortBy === "featured") return products;
   const sorted = [...products];
   switch (sortBy) {
-    case 'price-asc':
+    case "price-asc":
       return sorted.sort((a, b) => netPrice(a) - netPrice(b));
-    case 'price-desc':
+    case "price-desc":
       return sorted.sort((a, b) => netPrice(b) - netPrice(a));
-    case 'rating':
+    case "rating":
       return sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-    case 'discount':
-      return sorted.sort((a, b) => (b.discountPercentage || 0) - (a.discountPercentage || 0));
+    case "discount":
+      return sorted.sort(
+        (a, b) => (b.discountPercentage || 0) - (a.discountPercentage || 0),
+      );
     default:
       return products;
   }
 }
 
-/**
- * Paginates an already-filtered array.
- */
 export function paginateProducts(products, page, perPage) {
   const start = (page - 1) * perPage;
   return products.slice(start, start + perPage);
 }
 
-/**
- * Derives unique brands (with counts) from a product list.
- */
 export function computeAvailableBrands(products) {
   const brandMap = {};
   products.forEach((p) => {
