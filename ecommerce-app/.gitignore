@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Personal interview-prep notes — never commit/push
+CLAUDE.md
